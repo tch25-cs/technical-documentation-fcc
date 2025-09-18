@@ -9,6 +9,14 @@
   <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
   <!-- Prism Toolbar (for copy button) -->
   <link href="https://cdn.jsdelivr.net/npm/prismjs/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+
+  <!-- Metadata for SEO & social sharing -->
+  <meta name="description" content="Operator-focused cybersecurity guide: threat modeling, controls (NIST/OWASP), hardened configs, validation, and incident response." />
+  <meta property="og:title" content="Cybersecurity Technical Documentation" />
+  <meta property="og:description" content="Practical guidance for securing web apps and infrastructure." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tch25-cs.github.io/technical-documentation-fcc/" />
+  <meta name="theme-color" content="#00e5ff" />
 </head>
 <body>
   <a class="skip-link" href="#main-doc">Skip to content</a>
@@ -134,10 +142,10 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
     <section id="references" class="main-section">
       <h2>References</h2>
       <ul>
-        <li><a href="https://www.nist.gov/cyberframework" target="_blank">NIST Cybersecurity Framework</a></li>
-        <li><a href="https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final" target="_blank">NIST SP 800-53 Rev. 5</a></li>
-        <li><a href="https://owasp.org/ASVS/" target="_blank">OWASP Application Security Verification Standard</a></li>
-        <li><a href="https://attack.mitre.org/" target="_blank">MITRE ATT&amp;CK</a></li>
+        <li><a href="https://www.nist.gov/cyberframework" target="_blank" rel="noopener noreferrer">NIST Cybersecurity Framework</a></li>
+        <li><a href="https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final" target="_blank" rel="noopener noreferrer">NIST SP 800-53 Rev. 5</a></li>
+        <li><a href="https://owasp.org/ASVS/" target="_blank" rel="noopener noreferrer">OWASP Application Security Verification Standard</a></li>
+        <li><a href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE ATT&amp;CK</a></li>
       </ul>
     </section>
   </main>
@@ -146,7 +154,7 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
     <p>Owner: Security | Last updated: <time datetime="2025-09-17">September 17, 2025</time></p>
   </footer>
 
-  <!-- Sidebar active-link script -->
+  <!-- Sidebar active-link script with aria-current -->
   <script>
     (function () {
       const links = Array.from(document.querySelectorAll('#navbar .nav-link'));
@@ -155,9 +163,9 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
       const io = new IntersectionObserver((entries) => {
         entries.forEach(e => {
           if (e.isIntersecting) {
-            links.forEach(l => l.classList.remove('active'));
+            links.forEach(l => { l.classList.remove('active'); l.removeAttribute('aria-current'); });
             const id = '#' + e.target.id;
-            if (byId[id]) byId[id].classList.add('active');
+            if (byId[id]) { byId[id].classList.add('active'); byId[id].setAttribute('aria-current','true'); }
           }
         });
       }, { rootMargin: '0px 0px -70% 0px', threshold: 0.1 });
