@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cybersecurity Technical Documentation</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Skip link for keyboard users -->
+  <a class="skip-link" href="#main-doc">Skip to content</a>
+
+  <header class="page-header" role="banner">
+    <h1>Cybersecurity Technical Documentation</h1>
+    <p class="subtitle">Clean, operator-focused guidance for secure implementation</p>
+  </header>
+
+  <nav id="navbar" aria-label="Table of contents">
+    <header>Contents</header>
+    <a href="#overview" class="nav-link">Overview</a>
+    <a href="#threat-model" class="nav-link">Threat Model</a>
+    <a href="#controls" class="nav-link">Controls</a>
+    <a href="#implementation" class="nav-link">Implementation</a>
+    <a href="#testing" class="nav-link">Testing &amp; Validation</a>
+    <a href="#incident" class="nav-link">Incident Response</a>
+    <a href="#references" class="nav-link">References</a>
+  </nav>
+
+  <main id="main-doc" role="main">
+    <section id="overview" class="main-section">
+      <h2>Overview</h2>
+      <p>Purpose, scope, audience, and assumptions for this document.</p>
+      <div class="callout info">
+        <strong>Tip:</strong> Write for the operator—short sentences, explicit steps, clear outcomes.
+      </div>
+      <p>Use this guide to understand threats, map controls, and implement secure practices.</p>
+      <pre><code class="language-bash"># Example: verify OpenSSL version
+openssl version -a
+</code></pre>
+      <ul>
+        <li>Audience: engineers, analysts, and operators</li>
+        <li>Scope: app &amp; infra security primitives</li>
+      </ul>
+    </section>
+
+    <section id="threat-model" class="main-section">
+      <h2>Threat Model</h2>
+      <p>Identify assets, actors, entry points, and abuse cases. Consider STRIDE and MITRE ATT&amp;CK mappings.</p>
+      <pre><code class="language-none">Asset: Authentication tokens
+Threat: Token theft via XSS or logs
+Impact: High
+Mitigation: HttpOnly cookies, CSP, secret vaulting
+</code></pre>
+    </section>
+
+    <section id="controls" class="main-section">
+      <h2>Controls</h2>
+      <p>Map controls to frameworks (e.g., NIST CSF / SP 800-53). Keep them testable and outcome-driven.</p>
+      <ul>
+        <li><code>AC-2</code> Account Management</li>
+        <li><code>SC-13</code> Cryptographic Protection</li>
+        <li><code>AU-6</code> Audit Review, Analysis, and Reporting</li>
+      </ul>
+    </section>
+
+    <section id="implementation" class="main-section">
+      <h2>Implementation</h2>
+      <p>Step-by-step tasks, configuration snippets, and validation commands.</p>
+      <pre><code class="language-bash"># Example: enforce TLS 1.2+ on nginx
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers HIGH:!aNULL:!MD5;
+</code></pre>
+      <div class="callout warn">
+        <strong>Warning:</strong> Validate cipher compatibility before rollout to avoid client breakage.
+      </div>
+    </section>
+
+    <section id="testing" class="main-section">
+      <h2>Testing &amp; Validation</h2>
+      <p>How we confirm controls are effective (automated checks, spot tests, metrics).</p>
+      <pre><code class="language-bash"># Example: security header check
+curl -sI https://example.com | grep -E \"Strict-Transport-Security|Content-Security-Policy\"
+</code></pre>
+    </section>
+
+    <section id="incident" class="main-section">
+      <h2>Incident Response</h2>
+      <p>Runbooks, severity definitions, comms templates, and post-incident review steps.</p>
+      <div class="callout danger">
+        <strong>Critical:</strong> If secrets are suspected compromised, rotate immediately and invalidate sessions.
+      </div>
+    </section>
+
+    <section id="references" class="main-section">
+      <h2>References</h2>
+      <ul>
+        <li>NIST Cybersecurity Framework (CSF)</li>
+        <li>NIST SP 800-53 Rev. 5</li>
+        <li>OWASP ASVS / Top 10</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="page-footer" role="contentinfo">
+    <p>Owner: Security | Last updated: <time datetime="2025-09-17">September 17, 2025</time></p>
+  </footer>
+
+  <!-- Optional: Active section highlight for the sidebar -->
+  <script>
+    (function () {
+      const links = Array.from(document.querySelectorAll('#navbar .nav-link'));
+      const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+      const byId = Object.fromEntries(links.map(a => [a.getAttribute('href'), a]));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            links.forEach(l => l.classList.remove('active'));
+            const id = '#' + e.target.id;
+            if (byId[id]) byId[id].classList.add('active');
+          }
+        });
+      }, { rootMargin: '0px 0px -70% 0px', threshold: 0.1 });
+      sections.forEach(s => io.observe(s));
+    }());
+  </script>
+</body>
+</html>
