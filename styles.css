@@ -232,3 +232,26 @@ tbody tr:hover { background: color-mix(in oklab, #0f151b 65%, transparent); }
   #main-doc, .main-section { box-shadow: none; border-color: #ccc; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .9em; color: #666; }
 }
+/* Stronger keyboard focus */
+#navbar a:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+/* Prism integration cleanup */
+pre[class*="language-"] {
+  background: transparent; /* let Prism theme show */
+}
+code[class*="language-"] {
+  text-shadow: none;
+}
+
+/* Print header title */
+@media print {
+  body::before {
+    content: "Cybersecurity Technical Documentation";
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+}
