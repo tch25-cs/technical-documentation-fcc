@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cybersecurity Technical Documentation</title>
   <link rel="stylesheet" href="styles.css" />
-  <!-- Prism.js syntax highlighting CSS -->
-<link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <!-- Prism.js syntax highlighting CSS (dark theme) -->
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
+  <!-- Prism Toolbar (for copy button) -->
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
 </head>
 <body>
   <a class="skip-link" href="#main-doc">Skip to content</a>
@@ -50,8 +52,7 @@
     <section id="threat-model" class="main-section">
       <h2>Threat Model</h2>
       <p>Understanding what we are defending against is the foundation of security. Assets, threats, attack vectors, and mitigations are listed below:</p>
-      <pre><code class="language-none">
-Asset: Authentication Tokens
+      <pre><code class="language-text">Asset: Authentication Tokens
 Threat: Token theft via XSS or logging
 Impact: High
 Mitigation: HttpOnly + Secure cookies, CSP, centralized vault
@@ -64,8 +65,7 @@ Mitigation: IAM SCPs, server-side encryption (SSE-KMS), least privilege
 Asset: Service Availability
 Threat: Distributed Denial of Service (DDoS)
 Impact: High
-Mitigation: WAF rules, CDN-based DDoS protection, autoscaling
-</code></pre>
+Mitigation: WAF rules, CDN-based DDoS protection, autoscaling</code></pre>
     </section>
 
     <!-- CONTROLS -->
@@ -87,19 +87,16 @@ Mitigation: WAF rules, CDN-based DDoS protection, autoscaling
     <section id="implementation" class="main-section">
       <h2>Implementation</h2>
       <p>Security controls must be enforced with concrete configurations. Examples:</p>
-      <pre><code class="language-bash">
-# Harden firewall with UFW
+      <pre><code class="language-bash"># Harden firewall with UFW
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow ssh
-sudo ufw enable
-</code></pre>
-      <pre><code class="language-nginx">
-# Enforce TLS 1.2+ in nginx
+sudo ufw enable</code></pre>
+
+      <pre><code class="language-nginx"># Enforce TLS 1.2+ in nginx
 ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers HIGH:!aNULL:!MD5;
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-</code></pre>
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;</code></pre>
     </section>
 
     <!-- TESTING -->
@@ -112,10 +109,8 @@ add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" alway
         <li>Audit dependencies with <code>npm audit</code> or <code>pip-audit</code>.</li>
         <li>Automate with CI/CD to block deployments if checks fail.</li>
       </ul>
-      <pre><code class="language-bash">
-# Example: Check for key security headers
-curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Security-Policy"
-</code></pre>
+      <pre><code class="language-bash"># Example: Check for key security headers
+curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Security-Policy"</code></pre>
     </section>
 
     <!-- INCIDENT RESPONSE -->
@@ -151,6 +146,7 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
     <p>Owner: Security | Last updated: <time datetime="2025-09-17">September 17, 2025</time></p>
   </footer>
 
+  <!-- Sidebar active-link script -->
   <script>
     (function () {
       const links = Array.from(document.querySelectorAll('#navbar .nav-link'));
@@ -168,9 +164,22 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
       sections.forEach(s => io.observe(s));
     }());
   </script>
+
   <!-- Prism.js core and languages -->
-<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-nginx.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-nginx.min.js"></script>
+  <!-- Prism plugins: normalize whitespace + toolbar & copy -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/toolbar/prism-toolbar.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+  <script>
+    Prism.plugins.NormalizeWhitespace.setDefaults({
+      'remove-trailing': true,
+      'remove-indent': true,
+      'left-trim': true,
+      'right-trim': true
+    });
+  </script>
 </body>
 </html>
