@@ -308,3 +308,9 @@ code[class*="language-"] { text-shadow: none; }
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
 }
+.diagram {
+  max-width: 100%;
+  height: auto;
+  margin: 20px 0;
+  display: block;
+}
