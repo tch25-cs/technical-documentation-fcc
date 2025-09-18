@@ -32,7 +32,7 @@
     <h1>Cybersecurity Technical Documentation</h1>
     <p class="subtitle">Guidelines for securing web applications and infrastructure</p>
     <div class="header-actions">
-      <!-- NEW: Contents (mobile) -->
+      <!-- Contents (mobile) -->
       <button id="tocToggle" class="btn" type="button"
               aria-pressed="false" aria-expanded="false"
               aria-controls="navbar" aria-label="Open table of contents">
@@ -50,13 +50,15 @@
     <a href="#threat-model" class="nav-link">Threat Model</a>
     <a href="#controls" class="nav-link">Controls</a>
     <a href="#implementation" class="nav-link">Implementation</a>
+    <!-- ADDED: Network Diagram -->
+    <a href="#diagram-example" class="nav-link">Network Diagram</a>
     <a href="#security-headers" class="nav-link">Security Headers</a>
     <a href="#testing" class="nav-link">Testing &amp; Validation</a>
     <a href="#incident" class="nav-link">Incident Response</a>
     <a href="#references" class="nav-link">References</a>
   </nav>
 
-  <!-- NEW: backdrop for off-canvas nav (click to close) -->
+  <!-- Backdrop for off-canvas nav -->
   <div id="backdrop" class="backdrop" hidden></div>
 
   <main id="main-doc" role="main">
@@ -128,37 +130,38 @@ ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers HIGH:!aNULL:!MD5;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;</code></pre>
     </section>
-<!-- DIAGRAM EXAMPLE -->
-<section id="diagram-example" class="main-section">
-  <h2>Example Diagram: Network Flow</h2>
-  <p>This simple diagram shows how requests flow from a user, through a firewall, to a server.</p>
 
-  <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" class="diagram">
-    <!-- User -->
-    <rect x="20" y="60" width="120" height="80" rx="10" fill="#00e5ff" stroke="#0ff" stroke-width="2"/>
-    <text x="80" y="110" text-anchor="middle" fill="#111" font-size="14">User</text>
+    <!-- DIAGRAM EXAMPLE -->
+    <section id="diagram-example" class="main-section">
+      <h2>Example Diagram: Network Flow</h2>
+      <p>This simple diagram shows how requests flow from a user, through a firewall, to a server.</p>
 
-    <!-- Firewall -->
-    <rect x="240" y="60" width="120" height="80" rx="10" fill="#111" stroke="#0ff" stroke-width="2"/>
-    <text x="300" y="110" text-anchor="middle" fill="#00e5ff" font-size="14">Firewall</text>
+      <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg"
+           class="diagram" role="img" aria-labelledby="diag-title diag-desc">
+        <title id="diag-title">Network flow: User to Firewall to Server</title>
+        <desc id="diag-desc">Arrows show traffic moving from user to firewall to server.</desc>
 
-    <!-- Server -->
-    <rect x="460" y="60" width="120" height="80" rx="10" fill="#00e5ff" stroke="#0ff" stroke-width="2"/>
-    <text x="520" y="110" text-anchor="middle" fill="#111" font-size="14">Server</text>
+        <!-- Nodes -->
+        <rect class="node node--accent" x="20"  y="60" width="120" height="80" rx="10"/>
+        <text class="label" x="80"  y="110">User</text>
 
-    <!-- Arrows -->
-    <line x1="140" y1="100" x2="240" y2="100" stroke="#0ff" stroke-width="2" marker-end="url(#arrowhead)"/>
-    <line x1="360" y1="100" x2="460" y2="100" stroke="#0ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+        <rect class="node node--hollow" x="240" y="60" width="120" height="80" rx="10"/>
+        <text class="label label--accent" x="300" y="110">Firewall</text>
 
-    <!-- Arrowhead definition -->
-    <defs>
-      <marker id="arrowhead" markerWidth="10" markerHeight="7"
-              refX="10" refY="3.5" orient="auto">
-        <polygon points="0 0, 10 3.5, 0 7" fill="#0ff" />
-      </marker>
-    </defs>
-  </svg>
-</section>
+        <rect class="node node--accent" x="460" y="60" width="120" height="80" rx="10"/>
+        <text class="label" x="520" y="110">Server</text>
+
+        <!-- Arrows -->
+        <line class="arrow" x1="140" y1="100" x2="240" y2="100" marker-end="url(#arrowhead)"/>
+        <line class="arrow" x1="360" y1="100" x2="460" y2="100" marker-end="url(#arrowhead)"/>
+
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon class="arrowhead" points="0 0, 10 3.5, 0 7"/>
+          </marker>
+        </defs>
+      </svg>
+    </section>
 
     <!-- SECURITY HEADERS -->
     <section id="security-headers" class="main-section">
@@ -249,8 +252,7 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
       <ul>
         <li><a href="https://www.nist.gov/cyberframework" target="_blank" rel="noopener noreferrer">NIST Cybersecurity Framework</a></li>
         <li><a href="https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final" target="_blank" rel="noopener noreferrer">NIST SP 800-53 Rev. 5</a></li>
-        <li><a href="https://owasp.org/www-project-application-security-verification-standard/" target="_blank" rel="noopener noreferrer">OWASP Application Security Verification Standard</a>
-</li>
+        <li><a href="https://owasp.org/www-project-application-security-verification-standard/" target="_blank" rel="noopener noreferrer">OWASP Application Security Verification Standard</a></li>
         <li><a href="https://attack.mitre.org/" target="_blank" rel="noopener noreferrer">MITRE ATT&amp;CK</a></li>
       </ul>
     </section>
@@ -309,7 +311,6 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
         tocBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
         backdrop.hidden = !open;
         if (open) {
-          // Focus first link for accessibility
           const firstLink = nav.querySelector('.nav-link');
           firstLink && firstLink.focus();
         } else {
@@ -319,9 +320,7 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
 
       tocBtn.addEventListener('click', () => setOpen(!document.body.classList.contains('nav-open')));
       backdrop.addEventListener('click', () => setOpen(false));
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') setOpen(false);
-      });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
     }());
   </script>
 
@@ -344,4 +343,5 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
   </script>
 </body>
 </html>
+
 
