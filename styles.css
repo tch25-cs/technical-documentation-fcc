@@ -167,7 +167,7 @@ pre > code { display: block; white-space: pre; }
 .callout.warn { border-color: #ffb020; }
 .callout.danger { border-color: #ff4d4f; }
 
-/* Tables (if added later) */
+/* Tables (future-proof) */
 table {
   width: 100%;
   border-collapse: separate;
@@ -181,7 +181,7 @@ th, td { padding: 12px 14px; border-bottom: 1px solid var(--border); }
 thead th { text-align: left; background: #0f151b; }
 tbody tr:hover { background: color-mix(in oklab, #0f151b 65%, transparent); }
 
-/* Buttons (utility if needed) */
+/* Buttons (utility) */
 .btn {
   display: inline-block;
   color: var(--text-0);
@@ -232,19 +232,20 @@ tbody tr:hover { background: color-mix(in oklab, #0f151b 65%, transparent); }
   #main-doc, .main-section { box-shadow: none; border-color: #ccc; }
   a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .9em; color: #666; }
 }
+
+/* =========================
+   Finishing tweaks (place at end)
+   ========================= */
+
 /* Stronger keyboard focus */
 #navbar a:focus-visible {
   outline: 0;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 35%, transparent);
 }
 
-/* Prism integration cleanup */
-pre[class*="language-"] {
-  background: transparent; /* let Prism theme show */
-}
-code[class*="language-"] {
-  text-shadow: none;
-}
+/* Prism integration cleanup (let Prism theme show) */
+pre[class*="language-"] { background: transparent; }
+code[class*="language-"] { text-shadow: none; }
 
 /* Print header title */
 @media print {
