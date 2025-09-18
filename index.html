@@ -7,12 +7,11 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- Skip link for keyboard users -->
   <a class="skip-link" href="#main-doc">Skip to content</a>
 
   <header class="page-header" role="banner">
     <h1>Cybersecurity Technical Documentation</h1>
-    <p class="subtitle">Clean, operator-focused guidance for secure implementation</p>
+    <p class="subtitle">Guidelines for securing web applications and infrastructure</p>
   </header>
 
   <nav id="navbar" aria-label="Table of contents">
@@ -27,76 +26,121 @@
   </nav>
 
   <main id="main-doc" role="main">
+    <!-- OVERVIEW -->
     <section id="overview" class="main-section">
       <h2>Overview</h2>
-      <p>Purpose, scope, audience, and assumptions for this document.</p>
-      <div class="callout info">
-        <strong>Tip:</strong> Write for the operator—short sentences, explicit steps, clear outcomes.
-      </div>
-      <p>Use this guide to understand threats, map controls, and implement secure practices.</p>
-      <pre><code class="language-bash"># Example: verify OpenSSL version
-openssl version -a
-</code></pre>
+      <p>
+        This document provides a structured approach to securing modern web applications and their supporting infrastructure. 
+        It is intended for developers, system administrators, and security analysts who are responsible for protecting critical assets.
+      </p>
       <ul>
-        <li>Audience: engineers, analysts, and operators</li>
-        <li>Scope: app &amp; infra security primitives</li>
+        <li><strong>Purpose:</strong> Establish a baseline of cybersecurity practices.</li>
+        <li><strong>Scope:</strong> Authentication, encryption, logging, and incident handling.</li>
+        <li><strong>Audience:</strong> Technical teams with operational responsibilities.</li>
+        <li><strong>Assumptions:</strong> Linux servers, web stack (nginx, Node.js, or similar).</li>
       </ul>
+      <div class="callout info">
+        <strong>Tip:</strong> Security documentation should be practical. Use clear steps, tested commands, and reference frameworks.
+      </div>
     </section>
 
+    <!-- THREAT MODEL -->
     <section id="threat-model" class="main-section">
       <h2>Threat Model</h2>
-      <p>Identify assets, actors, entry points, and abuse cases. Consider STRIDE and MITRE ATT&amp;CK mappings.</p>
-      <pre><code class="language-none">Asset: Authentication tokens
-Threat: Token theft via XSS or logs
+      <p>Understanding what we are defending against is the foundation of security. Assets, threats, attack vectors, and mitigations are listed below:</p>
+      <pre><code class="language-none">
+Asset: Authentication Tokens
+Threat: Token theft via XSS or logging
 Impact: High
-Mitigation: HttpOnly cookies, CSP, secret vaulting
+Mitigation: HttpOnly + Secure cookies, CSP, centralized vault
+
+Asset: User PII (Personally Identifiable Information)
+Threat: Exfiltration via misconfigured S3 bucket
+Impact: Critical
+Mitigation: IAM SCPs, server-side encryption (SSE-KMS), least privilege
+
+Asset: Service Availability
+Threat: Distributed Denial of Service (DDoS)
+Impact: High
+Mitigation: WAF rules, CDN-based DDoS protection, autoscaling
 </code></pre>
     </section>
 
+    <!-- CONTROLS -->
     <section id="controls" class="main-section">
       <h2>Controls</h2>
-      <p>Map controls to frameworks (e.g., NIST CSF / SP 800-53). Keep them testable and outcome-driven.</p>
+      <p>Controls should be mapped to established frameworks like NIST CSF, NIST SP 800-53, and OWASP. Example baseline controls include:</p>
       <ul>
-        <li><code>AC-2</code> Account Management</li>
-        <li><code>SC-13</code> Cryptographic Protection</li>
-        <li><code>AU-6</code> Audit Review, Analysis, and Reporting</li>
+        <li><code>IA-2</code> – Enforce multi-factor authentication for privileged accounts.</li>
+        <li><code>SC-13</code> – Use TLS 1.2+ for all external communications.</li>
+        <li><code>AU-6</code> – Centralize log collection and enable automated alerting.</li>
+        <li><code>CM-3</code> – Require peer review for all infrastructure changes.</li>
       </ul>
+      <div class="callout warn">
+        <strong>Warning:</strong> Unmapped controls may introduce gaps in compliance reporting.
+      </div>
     </section>
 
+    <!-- IMPLEMENTATION -->
     <section id="implementation" class="main-section">
       <h2>Implementation</h2>
-      <p>Step-by-step tasks, configuration snippets, and validation commands.</p>
-      <pre><code class="language-bash"># Example: enforce TLS 1.2+ on nginx
+      <p>Security controls must be enforced with concrete configurations. Examples:</p>
+      <pre><code class="language-bash">
+# Harden firewall with UFW
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow ssh
+sudo ufw enable
+</code></pre>
+      <pre><code class="language-nginx">
+# Enforce TLS 1.2+ in nginx
 ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers HIGH:!aNULL:!MD5;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 </code></pre>
-      <div class="callout warn">
-        <strong>Warning:</strong> Validate cipher compatibility before rollout to avoid client breakage.
-      </div>
     </section>
 
+    <!-- TESTING -->
     <section id="testing" class="main-section">
       <h2>Testing &amp; Validation</h2>
-      <p>How we confirm controls are effective (automated checks, spot tests, metrics).</p>
-      <pre><code class="language-bash"># Example: security header check
-curl -sI https://example.com | grep -E \"Strict-Transport-Security|Content-Security-Policy\"
+      <p>Controls should be verified regularly through manual checks and automation.</p>
+      <ul>
+        <li>Run <code>nmap</code> scans to confirm exposed ports.</li>
+        <li>Validate security headers with <code>curl</code>.</li>
+        <li>Audit dependencies with <code>npm audit</code> or <code>pip-audit</code>.</li>
+        <li>Automate with CI/CD to block deployments if checks fail.</li>
+      </ul>
+      <pre><code class="language-bash">
+# Example: Check for key security headers
+curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Security-Policy"
 </code></pre>
     </section>
 
+    <!-- INCIDENT RESPONSE -->
     <section id="incident" class="main-section">
       <h2>Incident Response</h2>
-      <p>Runbooks, severity definitions, comms templates, and post-incident review steps.</p>
+      <p>A structured process ensures consistent handling of security incidents:</p>
+      <ol>
+        <li><strong>Detect:</strong> Alert triggered in SIEM.</li>
+        <li><strong>Triage:</strong> Classify severity (Low, Medium, High, Critical).</li>
+        <li><strong>Contain:</strong> Disable compromised accounts, block malicious IPs.</li>
+        <li><strong>Eradicate:</strong> Patch vulnerability, rotate credentials.</li>
+        <li><strong>Recover:</strong> Restore systems and validate integrity.</li>
+        <li><strong>Lessons Learned:</strong> Conduct post-mortem and update playbooks.</li>
+      </ol>
       <div class="callout danger">
-        <strong>Critical:</strong> If secrets are suspected compromised, rotate immediately and invalidate sessions.
+        <strong>Critical:</strong> If credentials or secrets are suspected compromised, rotate immediately and invalidate all sessions.
       </div>
     </section>
 
+    <!-- REFERENCES -->
     <section id="references" class="main-section">
       <h2>References</h2>
       <ul>
-        <li>NIST Cybersecurity Framework (CSF)</li>
-        <li>NIST SP 800-53 Rev. 5</li>
-        <li>OWASP ASVS / Top 10</li>
+        <li><a href="https://www.nist.gov/cyberframework" target="_blank">NIST Cybersecurity Framework</a></li>
+        <li><a href="https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final" target="_blank">NIST SP 800-53 Rev. 5</a></li>
+        <li><a href="https://owasp.org/ASVS/" target="_blank">OWASP Application Security Verification Standard</a></li>
+        <li><a href="https://attack.mitre.org/" target="_blank">MITRE ATT&amp;CK</a></li>
       </ul>
     </section>
   </main>
@@ -105,7 +149,6 @@ curl -sI https://example.com | grep -E \"Strict-Transport-Security|Content-Secur
     <p>Owner: Security | Last updated: <time datetime="2025-09-17">September 17, 2025</time></p>
   </footer>
 
-  <!-- Optional: Active section highlight for the sidebar -->
   <script>
     (function () {
       const links = Array.from(document.querySelectorAll('#navbar .nav-link'));
