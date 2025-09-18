@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cybersecurity Technical Documentation</title>
-<!-- Favicon -->
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
 
   <!-- Core stylesheet -->
   <link rel="stylesheet" href="styles.css" />
@@ -32,7 +32,15 @@
     <h1>Cybersecurity Technical Documentation</h1>
     <p class="subtitle">Guidelines for securing web applications and infrastructure</p>
     <div class="header-actions">
-      <button id="themeToggle" class="btn" type="button" aria-pressed="false" aria-label="Toggle Matrix theme">Matrix theme: Off</button>
+      <!-- NEW: Contents (mobile) -->
+      <button id="tocToggle" class="btn" type="button"
+              aria-pressed="false" aria-expanded="false"
+              aria-controls="navbar" aria-label="Open table of contents">
+        Contents
+      </button>
+      <button id="themeToggle" class="btn" type="button" aria-pressed="false" aria-label="Toggle Matrix theme">
+        Matrix theme: Off
+      </button>
     </div>
   </header>
 
@@ -47,6 +55,9 @@
     <a href="#incident" class="nav-link">Incident Response</a>
     <a href="#references" class="nav-link">References</a>
   </nav>
+
+  <!-- NEW: backdrop for off-canvas nav (click to close) -->
+  <div id="backdrop" class="backdrop" hidden></div>
 
   <main id="main-doc" role="main">
     <!-- OVERVIEW -->
@@ -239,23 +250,46 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
     }());
   </script>
 
-  <!-- UI helpers: theme toggle + back-to-top -->
+  <!-- UI helpers: theme toggle + back-to-top + mobile TOC -->
   <script>
     (function () {
-      const btn = document.getElementById('themeToggle');
-      const topBtn = document.getElementById('toTop');
+      const themeBtn = document.getElementById('themeToggle');
+      const topBtn   = document.getElementById('toTop');
+      const tocBtn   = document.getElementById('tocToggle');
+      const nav      = document.getElementById('navbar');
+      const backdrop = document.getElementById('backdrop');
 
       // Theme toggle
-      const apply = (on) => {
+      const applyTheme = (on) => {
         document.body.classList.toggle('theme-matrix', on);
-        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-        btn.textContent = 'Matrix theme: ' + (on ? 'On' : 'Off');
+        themeBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        themeBtn.textContent = 'Matrix theme: ' + (on ? 'On' : 'Off');
       };
-      btn.addEventListener('click', () => apply(!document.body.classList.contains('theme-matrix')));
+      themeBtn.addEventListener('click', () => applyTheme(!document.body.classList.contains('theme-matrix')));
 
-      // Back-to-top button visibility + behavior
+      // Back-to-top
       addEventListener('scroll', () => { topBtn.style.display = scrollY > 600 ? 'block' : 'none'; });
       topBtn.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+
+      // Mobile TOC: open/close
+      const setOpen = (open) => {
+        document.body.classList.toggle('nav-open', open);
+        tocBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        backdrop.hidden = !open;
+        if (open) {
+          // Focus first link for accessibility
+          const firstLink = nav.querySelector('.nav-link');
+          firstLink && firstLink.focus();
+        } else {
+          tocBtn.focus();
+        }
+      };
+
+      tocBtn.addEventListener('click', () => setOpen(!document.body.classList.contains('nav-open')));
+      backdrop.addEventListener('click', () => setOpen(false));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setOpen(false);
+      });
     }());
   </script>
 
@@ -278,3 +312,4 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
   </script>
 </body>
 </html>
+
