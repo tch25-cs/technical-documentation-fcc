@@ -128,6 +128,37 @@ ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers HIGH:!aNULL:!MD5;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;</code></pre>
     </section>
+<!-- DIAGRAM EXAMPLE -->
+<section id="diagram-example" class="main-section">
+  <h2>Example Diagram: Network Flow</h2>
+  <p>This simple diagram shows how requests flow from a user, through a firewall, to a server.</p>
+
+  <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" class="diagram">
+    <!-- User -->
+    <rect x="20" y="60" width="120" height="80" rx="10" fill="#00e5ff" stroke="#0ff" stroke-width="2"/>
+    <text x="80" y="110" text-anchor="middle" fill="#111" font-size="14">User</text>
+
+    <!-- Firewall -->
+    <rect x="240" y="60" width="120" height="80" rx="10" fill="#111" stroke="#0ff" stroke-width="2"/>
+    <text x="300" y="110" text-anchor="middle" fill="#00e5ff" font-size="14">Firewall</text>
+
+    <!-- Server -->
+    <rect x="460" y="60" width="120" height="80" rx="10" fill="#00e5ff" stroke="#0ff" stroke-width="2"/>
+    <text x="520" y="110" text-anchor="middle" fill="#111" font-size="14">Server</text>
+
+    <!-- Arrows -->
+    <line x1="140" y1="100" x2="240" y2="100" stroke="#0ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="100" x2="460" y2="100" stroke="#0ff" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+    <!-- Arrowhead definition -->
+    <defs>
+      <marker id="arrowhead" markerWidth="10" markerHeight="7"
+              refX="10" refY="3.5" orient="auto">
+        <polygon points="0 0, 10 3.5, 0 7" fill="#0ff" />
+      </marker>
+    </defs>
+  </svg>
+</section>
 
     <!-- SECURITY HEADERS -->
     <section id="security-headers" class="main-section">
