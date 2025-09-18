@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cybersecurity Technical Documentation</title>
 
-  <!-- Your stylesheet -->
+  <!-- Core stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Prism.js syntax highlighting CSS (dark theme) -->
+  <!-- Prism.js syntax highlighting (dark theme + plugins) -->
   <link href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism-tomorrow.min.css" rel="stylesheet" />
-  <!-- Prism Toolbar (for copy button) -->
   <link href="https://cdn.jsdelivr.net/npm/prismjs/plugins/toolbar/prism-toolbar.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet" />
 
   <!-- Metadata for SEO & social sharing -->
   <meta name="description" content="Operator-focused cybersecurity guide: threat modeling, controls (NIST/OWASP), hardened configs, validation, and incident response." />
@@ -27,6 +27,9 @@
   <header class="page-header" role="banner">
     <h1>Cybersecurity Technical Documentation</h1>
     <p class="subtitle">Guidelines for securing web applications and infrastructure</p>
+    <div class="header-actions">
+      <button id="themeToggle" class="btn" type="button" aria-pressed="false" aria-label="Toggle Matrix theme">Matrix theme: Off</button>
+    </div>
   </header>
 
   <nav id="navbar" aria-label="Table of contents">
@@ -35,6 +38,7 @@
     <a href="#threat-model" class="nav-link">Threat Model</a>
     <a href="#controls" class="nav-link">Controls</a>
     <a href="#implementation" class="nav-link">Implementation</a>
+    <a href="#security-headers" class="nav-link">Security Headers</a>
     <a href="#testing" class="nav-link">Testing &amp; Validation</a>
     <a href="#incident" class="nav-link">Incident Response</a>
     <a href="#references" class="nav-link">References</a>
@@ -63,7 +67,7 @@
     <section id="threat-model" class="main-section">
       <h2>Threat Model</h2>
       <p>Understanding what we are defending against is the foundation of security. Assets, threats, attack vectors, and mitigations are listed below:</p>
-      <pre><code class="language-text">Asset: Authentication Tokens
+      <pre class="line-numbers"><code class="language-text">Asset: Authentication Tokens
 Threat: Token theft via XSS or logging
 Impact: High
 Mitigation: HttpOnly + Secure cookies, CSP, centralized vault
@@ -98,16 +102,54 @@ Mitigation: WAF rules, CDN-based DDoS protection, autoscaling</code></pre>
     <section id="implementation" class="main-section">
       <h2>Implementation</h2>
       <p>Security controls must be enforced with concrete configurations. Examples:</p>
-      <pre><code class="language-bash"># Harden firewall with UFW
+      <pre class="line-numbers"><code class="language-bash"># Harden firewall with UFW
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 sudo ufw allow ssh
 sudo ufw enable</code></pre>
 
-      <pre><code class="language-nginx"># Enforce TLS 1.2+ in nginx
+      <pre class="line-numbers"><code class="language-nginx"># Enforce TLS 1.2+ in nginx
 ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers HIGH:!aNULL:!MD5;
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;</code></pre>
+    </section>
+
+    <!-- SECURITY HEADERS -->
+    <section id="security-headers" class="main-section">
+      <h2>Security Headers</h2>
+      <p>Harden HTTP responses with headers that mitigate common web risks:</p>
+      <table>
+        <thead>
+          <tr><th>Header</th><th>Purpose</th><th>Example</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Content-Security-Policy (CSP)</td>
+            <td>Mitigate XSS by restricting sources</td>
+            <td><code>default-src 'self'; img-src 'self' https:; script-src 'self'</code></td>
+          </tr>
+          <tr>
+            <td>X-Content-Type-Options</td>
+            <td>Prevent MIME sniffing</td>
+            <td><code>nosniff</code></td>
+          </tr>
+          <tr>
+            <td>Referrer-Policy</td>
+            <td>Limit referrer leakage</td>
+            <td><code>strict-origin-when-cross-origin</code></td>
+          </tr>
+          <tr>
+            <td>Permissions-Policy</td>
+            <td>Disable unused browser APIs</td>
+            <td><code>camera=(), microphone=(), geolocation=()</code></td>
+          </tr>
+          <tr>
+            <td>Strict-Transport-Security (HSTS)</td>
+            <td>Enforce HTTPS in browsers</td>
+            <td><code>max-age=31536000; includeSubDomains</code></td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- TESTING -->
@@ -120,7 +162,7 @@ add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" alway
         <li>Audit dependencies with <code>npm audit</code> or <code>pip-audit</code>.</li>
         <li>Automate with CI/CD to block deployments if checks fail.</li>
       </ul>
-      <pre><code class="language-bash"># Example: Check for key security headers
+      <pre class="line-numbers"><code class="language-bash"># Example: Check for key security headers
 curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Security-Policy"</code></pre>
     </section>
 
@@ -136,6 +178,20 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
         <li><strong>Recover:</strong> Restore systems and validate integrity.</li>
         <li><strong>Lessons Learned:</strong> Conduct post-mortem and update playbooks.</li>
       </ol>
+
+      <h3 class="mt-2">Severity Levels</h3>
+      <table>
+        <thead>
+          <tr><th>Severity</th><th>Description</th><th>Target Response</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>S0 – Critical</td><td>Active widespread compromise, customer impact</td><td>Immediate, 24/7 on-call</td></tr>
+          <tr><td>S1 – High</td><td>Credible threat or limited compromise</td><td>&lt; 30 minutes</td></tr>
+          <tr><td>S2 – Medium</td><td>Suspicious activity, no confirmed impact</td><td>Same business day</td></tr>
+          <tr><td>S3 – Low</td><td>Informational or false positive</td><td>Next business day</td></tr>
+        </tbody>
+      </table>
+
       <div class="callout danger">
         <strong>Critical:</strong> If credentials or secrets are suspected compromised, rotate immediately and invalidate all sessions.
       </div>
@@ -157,6 +213,9 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
     <p>Owner: Security | Last updated: <time datetime="2025-09-17">September 17, 2025</time></p>
   </footer>
 
+  <!-- Back-to-top button -->
+  <button id="toTop" class="to-top" type="button" aria-label="Back to top">↑</button>
+
   <!-- Sidebar active-link script with aria-current -->
   <script>
     (function () {
@@ -176,14 +235,35 @@ curl -sI https://example.com | grep -E "Strict-Transport-Security|Content-Securi
     }());
   </script>
 
-  <!-- Prism.js core and languages -->
-  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-nginx.min.js"></script>
-  <!-- Prism plugins: normalize whitespace + toolbar & copy -->
-  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/toolbar/prism-toolbar.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+  <!-- UI helpers: theme toggle + back-to-top -->
+  <script>
+    (function () {
+      const btn = document.getElementById('themeToggle');
+      const topBtn = document.getElementById('toTop');
+
+      // Theme toggle
+      const apply = (on) => {
+        document.body.classList.toggle('theme-matrix', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        btn.textContent = 'Matrix theme: ' + (on ? 'On' : 'Off');
+      };
+      btn.addEventListener('click', () => apply(!document.body.classList.contains('theme-matrix')));
+
+      // Back-to-top button visibility + behavior
+      addEventListener('scroll', () => { topBtn.style.display = scrollY > 600 ? 'block' : 'none'; });
+      topBtn.addEventListener('click', () => scrollTo({ top: 0, behavior: 'smooth' }));
+    }());
+  </script>
+
+  <!-- Prism.js core + languages (defer for faster paint) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-bash.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-nginx.min.js"></script>
+  <!-- Prism plugins: normalize whitespace, line numbers, toolbar & copy -->
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs/plugins/normalize-whitespace/prism-normalize-whitespace.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-numbers/prism-line-numbers.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs/plugins/toolbar/prism-toolbar.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
   <script>
     Prism.plugins.NormalizeWhitespace.setDefaults({
       'remove-trailing': true,
