@@ -308,9 +308,18 @@ code[class*="language-"] { text-shadow: none; }
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
 }
-.diagram {
-  max-width: 100%;
-  height: auto;
-  margin: 20px 0;
-  display: block;
+/* Diagram styling (theme-aware) */
+.diagram { max-width: 100%; height: auto; margin: 20px 0; display: block; }
+.diagram .node { stroke: var(--accent); stroke-width: 2; }
+.diagram .node--accent { fill: var(--accent); }
+.diagram .node--hollow { fill: transparent; }
+.diagram .label { fill: #111; font-size: 14px; text-anchor: middle; }
+.diagram .label--accent { fill: var(--accent); }
+.diagram .arrow, .diagram .arrowhead { stroke: var(--accent); fill: var(--accent); stroke-width: 2; }
+
+/* Better small-screen legibility */
+@media (max-width: 480px) {
+  .diagram .label { font-size: 13px; }
+  .diagram .arrow { stroke-width: 1.5; }
 }
+
